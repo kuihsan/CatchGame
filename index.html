@@ -23,6 +23,39 @@
         <div id="unity-build-title">BurgerCatch</div>
       </div>
     </div>
+    <input
+  id="nameInput"
+  type="text"
+  placeholder="Enter your name"
+  maxlength="12"
+  style="
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 12px;
+    font-size: 18px;
+    display: none;
+    z-index: 9999;
+  "
+/>
+
+<button
+  id="startBtn"
+  style="
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 12px 24px;
+    font-size: 18px;
+    display: none;
+    z-index: 9999;
+  "
+>
+  Start
+</button>
+
     <script>
 
       var container = document.querySelector("#unity-container");
@@ -129,3 +162,32 @@
     </script>
   </body>
 </html>
+<script>
+  const nameInput = document.getElementById("nameInput");
+  const startBtn = document.getElementById("startBtn");
+
+  function ShowNameInput() {
+    nameInput.style.display = "block";
+    startBtn.style.display = "block";
+    nameInput.focus();
+  }
+
+  function HideNameInput() {
+    nameInput.style.display = "none";
+    startBtn.style.display = "none";
+    nameInput.value = "";
+  }
+
+  startBtn.onclick = () => {
+    if (nameInput.value.length === 0) return;
+
+    // Send name to Unity
+    unityInstance.SendMessage(
+      "GameManager",
+      "StartGameFromHTML",
+      nameInput.value
+    );
+
+    HideNameInput();
+  };
+</script>
