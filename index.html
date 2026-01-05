@@ -8,8 +8,12 @@
 </head>
 
 <body>
+  <!-- ===================== -->
+  <!-- UNITY CONTAINER -->
+  <!-- ===================== -->
+
   <div id="unity-container" class="unity-desktop">
-    <canvas id="unity-canvas" width="540" height="960" tabindex="-1"></canvas>
+    <canvas id="unity-canvas" width="540" height="960"></canvas>
 
     <div id="unity-loading-bar">
       <div id="unity-logo"></div>
@@ -36,6 +40,7 @@
     type="text"
     placeholder="Enter your name"
     maxlength="12"
+    autocomplete="off"
     style="
       position: absolute;
       top: 40%;
@@ -71,12 +76,12 @@
   <script>
     let unityInstance = null;
 
-    const container = document.querySelector("#unity-container");
-    const canvas = document.querySelector("#unity-canvas");
-    const loadingBar = document.querySelector("#unity-loading-bar");
-    const progressBarFull = document.querySelector("#unity-progress-bar-full");
-    const fullscreenButton = document.querySelector("#unity-fullscreen-button");
-    const warningBanner = document.querySelector("#unity-warning");
+    const container = document.getElementById("unity-container");
+    const canvas = document.getElementById("unity-canvas");
+    const loadingBar = document.getElementById("unity-loading-bar");
+    const progressBarFull = document.getElementById("unity-progress-bar-full");
+    const fullscreenButton = document.getElementById("unity-fullscreen-button");
+    const warningBanner = document.getElementById("unity-warning");
 
     function unityShowBanner(msg, type) {
       const div = document.createElement("div");
@@ -87,9 +92,7 @@
         div.style = "background: red; padding: 10px;";
       } else if (type === "warning") {
         div.style = "background: yellow; padding: 10px;";
-        setTimeout(() => {
-          warningBanner.removeChild(div);
-        }, 5000);
+        setTimeout(() => warningBanner.removeChild(div), 5000);
       }
     }
 
@@ -107,6 +110,7 @@
       showBanner: unityShowBanner,
     };
 
+    // Mobile viewport
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
       const meta = document.createElement("meta");
       meta.name = "viewport";
@@ -137,9 +141,7 @@
             unityInstance.SetFullscreen(1);
           };
         })
-        .catch((message) => {
-          alert(message);
-        });
+        .catch((message) => alert(message));
     };
 
     document.body.appendChild(script);
@@ -154,41 +156,66 @@
     const startBtn = document.getElementById("startBtn");
 
     function ShowNameInput() {
-      canvas.style.pointerEvents = "none"; // allow HTML interaction
+      // 🔥 Kill Unity keyboard focus
+      canvas.blur();
+      canvas.style.pointerEvents = "none";
+
       nameInput.style.display = "block";
       startBtn.style.display = "block";
-      nameInput.focus();
+
+      // 🔥 Force browser keyboard focus
+      setTimeout(() => {
+        nameInput.focus();
+      }, 0);
     }
 
     function HideNameInput() {
-      canvas.style.pointerEvents = "auto"; // return control to Unity
+      nameInput.blur();
+
       nameInput.style.display = "none";
       startBtn.style.display = "none";
       nameInput.value = "";
+
+      canvas.style.pointerEvents = "auto";
+      canvas.focus(); // 🔥 Return control to Unity
     }
 
     function StartGame() {
-      if (!unityInstance || nameInput.value.trim() === "") return;
+      if (!unityInstance) return;
+
+      const name = nameInput.value.trim();
+      if (name.length === 0) return;
 
       unityInstance.SendMessage(
         "GameManager",
         "StartGameFromHTML",
-        nameInput.value
+        name
       );
 
       HideNameInput();
     }
 
-    // 🖱️ Mouse click
+    // 🖱️ Mouse
     startBtn.addEventListener("click", StartGame);
 
-    // ⌨️ ENTER key (PC keyboard support)
+    // ⌨️ ENTER key
     nameInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
         StartGame();
       }
     });
+
+    // 🔒 Prevent Unity from stealing keys while typing
+    document.addEventListener(
+      "keydown",
+      (e) => {
+        if (nameInput.style.display === "block") {
+          e.stopPropagation();
+        }
+      },
+      true
+    );
   </script>
 
 </body>
