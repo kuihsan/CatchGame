@@ -42,7 +42,7 @@ Players enter their name, catch falling apples using a basket, and their **score
 ### PC / Laptop
 - Move mouse to control the basket
 - Type name using keyboard
-- Press **Enter** or click **Start** to begin
+- Click **Start** to begin
 
 ---
 
@@ -75,13 +75,6 @@ Players enter their name, catch falling apples using a basket, and their **score
 - Marketing campaigns
 - Educational demos
 - Game development portfolio showcase
-
----
-
-## 📸 Screenshots / Demo
-
-> (Optional)  
-Add screenshots or a short GIF here to showcase gameplay.
 
 ---
 
